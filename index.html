@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Realtà Aumentata Web - MindAR</title>
 
-  <!-- A-Frame 1.4.2 -->
+  <!-- A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <!-- MindAR 1.2.2 -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
@@ -20,11 +19,20 @@
   </style>
 
   <script>
-    // Componente personalizzato per gestire il click sull'immagine AR
-    AFRAME.registerComponent('clickable-link', {
+    // Componente per intercettare il tap direttamente sul piano 3D
+    AFRAME.registerComponent('click-redirect', {
       init: function () {
-        this.el.addEventListener('click', function () {
-          window.location.href = 'https://online.fliphtml5.com/kyszr/Brochure-completa/';
+        const url = 'https://online.fliphtml5.com/kyszr/Brochure-completa/';
+
+        // Gestione evento Click (Android / Desktop)
+        this.el.addEventListener('click', () => {
+          window.location.href = url;
+        });
+
+        // Gestione evento Touch (iOS / Safari)
+        this.el.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          window.location.href = url;
         });
       }
     });
@@ -43,14 +51,13 @@
       <img id="pag01Image" src="pag1.png">
     </a-assets>
 
-    <!-- Fotocamera con il raycaster abilitato per rilevare il tap sullo schermo -->
+    <!-- Cursor configurato per rilevare i tocchi touch del display -->
     <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Piano con classe clickable e attributo clickable-link -->
       <a-plane 
         class="clickable"
-        clickable-link
+        click-redirect
         src="#pag01Image" 
         position="0 0 0" 
         height="1" 
